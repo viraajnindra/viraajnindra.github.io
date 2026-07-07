@@ -1,0 +1,1144 @@
+/* ==========================================================================
+   Viraaj Nindra — Summit to Base Camp
+   Scroll-driven descent portfolio
+   ========================================================================== */
+
+:root {
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --rock-1: #101320;
+  --rock-2: #2e313e;
+  --rock-3: #59627d;
+  --snow: #adb6d1;
+  --sky-1: #6f90d0;
+  --sky-2: #4b6cac;
+
+  --gold: #ffd76a;
+  --gold-dark: #b8860b;
+  --ice: #bfe9ff;
+  --ice-dark: #4fa8d8;
+  --emerald: #3ddc97;
+  --sapphire: #4f8dff;
+  --silver: #cfd6e0;
+  --ruby: #ff4f6d;
+  --amethyst: #b06cff;
+
+  --ochre: #c96f38;
+  --clay: #a8412e;
+  --pigment-white: #d8cfc0;
+  --pigment-yellow: #d4a94c;
+
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--rock-1);
+  color: #eef1f8;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  margin: 0;
+}
+
+p { margin: 0; }
+
+a { color: inherit; }
+
+img, svg { display: block; max-width: 100%; }
+
+.section-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 5rem) clamp(1.25rem, 5vw, 3rem);
+}
+
+/* ==========================================================================
+   Elevation HUD
+   ========================================================================== */
+
+.elevation-hud {
+  position: fixed;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+.elevation-track {
+  position: relative;
+  width: 3px;
+  height: min(40vh, 320px);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.35), rgba(255,255,255,0.08));
+  border-radius: 2px;
+}
+
+.elevation-marker {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+  background: var(--ice);
+  border-radius: 50%;
+  box-shadow: 0 0 8px 2px rgba(191, 233, 255, 0.7);
+}
+
+.elevation-readout {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: rgba(255,255,255,0.85);
+  writing-mode: horizontal-tb;
+  white-space: nowrap;
+  background: rgba(10, 11, 18, 0.65);
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  backdrop-filter: blur(2px);
+}
+
+@media (max-width: 640px) {
+  .elevation-hud { display: none; }
+}
+
+/* ==========================================================================
+   SECTION 1 — Summit video scrub
+   ========================================================================== */
+
+.summit-section {
+  position: relative;
+  height: 400vh;
+}
+
+.summit-pin {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #05060a;
+}
+
+#scrubCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.reduced-motion-hero {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Descent shade: during the last stretch of the scrub the frame's lower rocks
+   sink into shadow, bottoming out on solid #101320 — the exact color the
+   blend section starts with, so the frame edge and the wall below read as
+   one continuous face. Sits under the title overlay (z-index 5). */
+.summit-shade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 52vh;
+  background: linear-gradient(to bottom,
+    rgba(16, 19, 32, 0) 0%,
+    rgba(16, 19, 32, 0.28) 42%,
+    rgba(16, 19, 32, 0.72) 76%,
+    #101320 100%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.summit-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  padding: 1.5rem;
+  z-index: 5;
+}
+
+.summit-title {
+  font-size: clamp(2.75rem, 9vw, 6.5rem);
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 4px 30px rgba(0,0,0,0.55);
+  letter-spacing: 0.01em;
+}
+
+.summit-subtitle {
+  margin-top: 0.75rem;
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: clamp(0.85rem, 2.2vw, 1.35rem);
+  color: rgba(255,255,255,0.88);
+  letter-spacing: 0.06em;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.6);
+}
+
+.summit-cta {
+  margin-top: 1.5rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1rem, 2.6vw, 1.5rem);
+  color: rgba(255, 255, 255, 0.94);
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.65);
+}
+
+
+.scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.5rem, 5vh, 3rem);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255,255,255,0.85);
+  z-index: 5;
+  animation: hintFade 2.4s ease-in-out infinite;
+}
+
+.scroll-hint-text {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.scroll-hint-line {
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.9), transparent);
+}
+
+@keyframes hintFade {
+  0%, 100% { opacity: 0.35; transform: translate(-50%, 0); }
+  50% { opacity: 1; transform: translate(-50%, 6px); }
+}
+
+/* ==========================================================================
+   SECTION 2 — Blend zone
+   ========================================================================== */
+
+/* The descent: the video's final frame ends on the summit ridge, so the page
+   continues below it as the shaded rock under the ridge line — sunlit grey
+   rock darkening steadily into the vertical wall. No mirrored imagery. */
+.blend-section {
+  position: relative;
+  height: 110vh;
+  min-height: 700px;
+  background-color: #101320;
+  background-image:
+    linear-gradient(to bottom, rgba(16, 21, 30, 0.62) 0%, rgba(14, 18, 26, 0.38) 9%, rgba(10, 13, 19, 0.15) 20%, transparent 32%),
+    radial-gradient(ellipse at 50% -8%, rgba(198, 214, 240, 0.14), rgba(150, 168, 198, 0.05) 40%, transparent 62%),
+    linear-gradient(to bottom, rgba(118, 130, 154, 0.4) 0%, rgba(46, 52, 72, 0.45) 38%, rgba(20, 23, 37, 0.5) 68%, rgba(16, 19, 32, 0.3) 100%),
+    url(../assets/rock-texture.svg);
+  background-size: auto, auto, auto, 460px;
+  background-position: 0 0, 0 0, 0 0, center;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat;
+  overflow: hidden;
+}
+
+/* Continuation of the ridge: the final frame's bottom strip (no mirroring),
+   stretched downward and softly blurred so the same rock and snow smear
+   into the shaded wall below before the texture takes over. */
+.blend-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 65vh;
+  background-image: url(../frames/frame-254.webp);
+  background-size: 100% 640%;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  filter: blur(6px) brightness(0.45) saturate(0.7);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.35) 62%, transparent 92%);
+  mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.35) 62%, transparent 92%);
+}
+
+/* Top stops start on solid #101320 — the color the summit shade above bottoms
+   out on — then lift to reveal the ridge continuation; bottom stops combine
+   with the base tint to a net ~0.55 #101320 over texture, the exact tint
+   .mountain-face starts with, so both hand-offs are invisible. */
+.blend-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, #101320 0%, rgba(16,19,32,0.82) 9%, rgba(16,19,32,0.48) 20%, rgba(16,19,32,0.2) 36%, rgba(16,19,32,0.12) 50%, rgba(16,19,32,0.28) 75%, rgba(16,19,32,0.35) 100%);
+}
+
+.rock-noise {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+}
+
+/* ==========================================================================
+   Shared rock background theme (sections 3+)
+   ========================================================================== */
+
+/* One rock face behind sections 3–5. A single tile + one long tint gradient
+   span the whole wrapper, so no texture, color, or lighting restarts at any
+   section boundary — the wall just keeps darkening on the way down.
+   Top tint (0.55 over #101320) matches the bottom of .blend-section above;
+   the bottom settles on solid #0a0b12 to hand off to .passions-section. */
+.mountain-face {
+  position: relative;
+  background-color: #101320;
+  background-image:
+    linear-gradient(to bottom,
+      rgba(16, 19, 32, 0.55) 0%,
+      rgba(14, 16, 26, 0.6) 40%,
+      rgba(11, 13, 20, 0.72) 75%,
+      #0a0b12 98%),
+    url(../assets/rock-texture.svg);
+  background-size: auto, 460px;
+  background-position: 0 0, center;
+  background-repeat: no-repeat, repeat;
+}
+
+
+.projects-section,
+.trail-section,
+.skills-section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Faint strata bands drifting on parallax — shadow ledges in the wall,
+   not section headers, so keep them barely-there */
+.rock-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  z-index: 1;
+  opacity: 0.35;
+}
+
+/* ==========================================================================
+   SECTION 3 — Passion Projects
+   ========================================================================== */
+
+/* Trim dead rock between the descent above and the first heading */
+.projects-section .section-inner {
+  padding-top: clamp(1.25rem, 3vw, 2.25rem);
+}
+
+.diamond-heading {
+  text-align: center;
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+
+.diamond-heading-text {
+  display: inline-block;
+  position: relative;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 600;
+  padding-bottom: 0.4em;
+  background: linear-gradient(100deg, #eaf6ff 0%, #bfe9ff 25%, #ffffff 45%, #8fd3ff 65%, #eaf6ff 85%, #bfe9ff 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+.diamond-heading-text::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 0;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, var(--ice) 15%, #fff 50%, var(--ice) 85%, transparent);
+  box-shadow: 0 0 12px rgba(191, 233, 255, 0.8);
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+.quartz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+
+.quartz-chunk {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  padding: 1rem;
+  border-radius: 14px;
+  transition: transform 0.4s var(--ease-smooth);
+}
+
+.quartz-chunk:hover,
+.quartz-chunk:focus-visible {
+  transform: translateY(-6px);
+}
+
+.quartz-shape {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(226, 232, 240, 0.35)) drop-shadow(0 0 22px rgba(203, 213, 225, 0.2));
+  transition: filter 0.4s ease, transform 0.4s var(--ease-smooth);
+}
+
+.quartz-chunk:hover .quartz-shape,
+.quartz-chunk:focus-visible .quartz-shape {
+  filter: drop-shadow(0 0 16px rgba(248, 250, 252, 0.75)) drop-shadow(0 0 34px rgba(191, 233, 255, 0.6));
+  transform: scale(1.05);
+}
+
+.quartz-facet {
+  fill: rgba(226, 232, 240, 0.8);
+  stroke: rgba(248, 250, 252, 0.9);
+  stroke-width: 1.5;
+  transition: fill 0.4s ease;
+}
+
+.quartz-facet--a { fill: rgba(248, 250, 252, 0.78); }
+.quartz-facet--b { fill: rgba(248, 250, 252, 0.92); }
+.quartz-facet--c { fill: rgba(226, 232, 240, 0.85); }
+.quartz-facet--d { fill: rgba(203, 213, 225, 0.75); }
+.quartz-facet--e { fill: rgba(226, 232, 240, 0.88); }
+
+.quartz-chunk--github .quartz-facet--f { fill: rgba(255, 215, 106, 0.55); }
+.quartz-chunk--github .quartz-facet--g { fill: rgba(255, 235, 180, 0.85); }
+.quartz-chunk--github .quartz-facet--h { fill: rgba(255, 244, 214, 0.75); }
+.quartz-chunk--github .quartz-facet--i { fill: rgba(255, 215, 106, 0.55); }
+.quartz-chunk--github .quartz-facet--j { fill: rgba(255, 235, 180, 0.8); }
+.quartz-chunk--github .quartz-facet { stroke: rgba(255, 235, 180, 0.9); }
+
+.quartz-chunk:hover .quartz-facet,
+.quartz-chunk:focus-visible .quartz-facet {
+  fill: rgba(248, 250, 252, 0.95);
+}
+
+.quartz-content {
+  text-align: center;
+  margin-top: 0.75rem;
+}
+
+.quartz-content h3 {
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+  color: #fff;
+}
+
+.quartz-content p {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.5;
+}
+
+.quartz-chunk:focus-visible {
+  outline: 2px solid var(--ice);
+  outline-offset: 4px;
+}
+
+/* ==========================================================================
+   SECTION 4 — Experience switchback trail
+   ========================================================================== */
+
+/* "The Trail Down" uses the shared .diamond-heading treatment */
+
+.trail-path-wrap {
+  position: absolute;
+  left: 50%;
+  top: 220px;
+  transform: translateX(-50%);
+  width: 400px;
+  max-width: 90%;
+  height: calc(100% - 220px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.trail-path-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.trail-path {
+  fill: none;
+  stroke: rgba(191, 233, 255, 0.55);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 14 14;
+}
+
+.trail-roles {
+  position: relative;
+  z-index: 2;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 8vw, 6rem);
+}
+
+.trail-role {
+  position: relative;
+  width: 46%;
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.trail-role--left { margin-right: auto; text-align: right; }
+.trail-role--right { margin-left: auto; text-align: left; }
+
+.trail-marker {
+  position: absolute;
+  top: 12px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--ice);
+  box-shadow: 0 0 12px 3px rgba(191, 233, 255, 0.7);
+}
+
+.trail-role--left .trail-marker { right: -34px; }
+.trail-role--right .trail-marker { left: -34px; }
+
+.trail-marker--flag {
+  background: var(--gold);
+  box-shadow: 0 0 12px 3px rgba(255, 215, 106, 0.7);
+}
+
+.trail-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 1.5rem 1.75rem;
+  backdrop-filter: blur(4px);
+}
+
+.trail-card h3 {
+  font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+  color: #fff;
+  font-weight: 600;
+}
+
+.trail-org {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  color: var(--ice);
+  text-transform: uppercase;
+}
+
+.trail-card p:last-child {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.trail-card--education {
+  border-color: rgba(255, 215, 106, 0.3);
+}
+
+@media (max-width: 720px) {
+  .trail-path-wrap { display: none; }
+  .trail-role,
+  .trail-role--left,
+  .trail-role--right {
+    width: 100%;
+    text-align: left;
+    margin: 0;
+  }
+  .trail-role--left .trail-marker,
+  .trail-role--right .trail-marker {
+    left: -10px;
+    right: auto;
+  }
+}
+
+/* ==========================================================================
+   SECTION 4.5 — Cairns: volunteer & leadership stone stacks
+   ========================================================================== */
+
+.cairns-section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Match the Skills treatment: subheading tucked under the underline */
+.cairns-section .diamond-heading {
+  margin-bottom: 0.75rem;
+}
+
+.cairns-subheading {
+  text-align: center;
+  margin-top: 0.5rem;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.9rem;
+}
+
+.cairn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: end;
+  margin-top: clamp(2rem, 5vw, 3.5rem);
+}
+
+.cairn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.4s var(--ease-smooth);
+}
+
+.cairn:hover,
+.cairn:focus-within {
+  transform: translateY(-6px);
+}
+
+.cairn-art {
+  width: min(200px, 70%);
+  height: auto;
+  filter: drop-shadow(0 0 8px rgba(191, 233, 255, 0.12));
+  transition: filter 0.4s ease;
+}
+
+.cairn:hover .cairn-art,
+.cairn:focus-within .cairn-art {
+  filter: drop-shadow(0 0 14px rgba(191, 233, 255, 0.45)) drop-shadow(0 0 30px rgba(191, 233, 255, 0.2));
+}
+
+.cairn-stone {
+  stroke: rgba(191, 233, 255, 0.35);
+  stroke-width: 1.5;
+}
+
+.cairn-shadow {
+  fill: rgba(0, 0, 0, 0.35);
+}
+
+.cairn-spark {
+  fill: var(--gold);
+  opacity: 0.85;
+}
+
+.cairn-card {
+  margin-top: 1.1rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 1.5rem 1.75rem;
+  backdrop-filter: blur(4px);
+  text-align: center;
+}
+
+.cairn-card h3 {
+  font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+  color: #fff;
+  font-weight: 600;
+}
+
+.cairn-org {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  color: var(--ice);
+  text-transform: uppercase;
+}
+
+.cairn-card p:last-child {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   SECTION 5 — Skills etched into the rock
+   ========================================================================== */
+
+/* "Skills" uses the shared .diamond-heading treatment; pull its subheading
+   back up under the underline */
+.skills-section .diamond-heading {
+  margin-bottom: 0.75rem;
+}
+
+.skills-subheading {
+  text-align: center;
+  margin-top: 0.5rem;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.9rem;
+}
+
+/* Sparse scatter of skill names placed straight on the rock face.
+   mix-blend-mode + carved shadows make them read as mineral-lit
+   inscriptions rather than floating UI text. */
+.skills-rock {
+  position: relative;
+  list-style: none;
+  margin: clamp(2rem, 5vw, 3.5rem) 0 0;
+  padding: 0;
+  min-height: clamp(560px, 95vh, 880px);
+}
+
+.skill-word {
+  position: absolute;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  mix-blend-mode: screen;
+}
+
+.skill-word--ml {
+  top: 4%; left: 6%;
+  transform: rotate(-4deg);
+  font-size: clamp(1.6rem, 4.4vw, 3rem);
+  color: var(--ice);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.9), 0 2px 3px rgba(0,0,0,0.6), 0 0 12px rgba(191,233,255,0.45), 0 0 32px rgba(191,233,255,0.22);
+}
+
+.skill-word--entre {
+  top: 15%; right: 8%;
+  transform: rotate(3deg);
+  font-size: clamp(1.55rem, 4.2vw, 2.9rem);
+  color: var(--gold);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.9), 0 2px 3px rgba(0,0,0,0.6), 0 0 12px rgba(255,215,106,0.45), 0 0 32px rgba(255,215,106,0.22);
+}
+
+.skill-word--arch {
+  top: 30%; left: 12%;
+  transform: rotate(2deg);
+  font-size: clamp(1.25rem, 3.4vw, 2.2rem);
+  color: var(--sapphire);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.9), 0 2px 3px rgba(0,0,0,0.6), 0 0 12px rgba(79,141,255,0.5), 0 0 32px rgba(79,141,255,0.25);
+}
+
+.skill-word--py {
+  top: 42%; right: 14%;
+  transform: rotate(-3deg);
+  font-size: clamp(1.6rem, 4.2vw, 2.8rem);
+  color: var(--emerald);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.9), 0 2px 3px rgba(0,0,0,0.6), 0 0 12px rgba(61,220,151,0.45), 0 0 32px rgba(61,220,151,0.22);
+}
+
+.skill-word--ai {
+  top: 56%; left: 8%;
+  transform: rotate(-2deg);
+  font-size: clamp(1.8rem, 4.8vw, 3rem);
+  color: var(--amethyst);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.9), 0 2px 3px rgba(0,0,0,0.6), 0 0 12px rgba(176,108,255,0.5), 0 0 32px rgba(176,108,255,0.25);
+}
+
+.skill-word--fullstack {
+  top: 68%; right: 6%;
+  transform: rotate(2deg);
+  font-size: clamp(1.1rem, 3vw, 1.9rem);
+  color: var(--silver);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.9), 0 2px 3px rgba(0,0,0,0.6), 0 0 12px rgba(207,214,224,0.4), 0 0 32px rgba(207,214,224,0.2);
+}
+
+.skill-word--collab {
+  top: 80%; left: 18%;
+  transform: rotate(-1.5deg);
+  font-size: clamp(1.05rem, 2.8vw, 1.8rem);
+  color: var(--ruby);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.9), 0 2px 3px rgba(0,0,0,0.6), 0 0 12px rgba(255,79,109,0.45), 0 0 32px rgba(255,79,109,0.22);
+}
+
+.skill-word--data {
+  top: 90%; right: 20%;
+  transform: rotate(2.5deg);
+  font-size: clamp(1.25rem, 3.2vw, 2rem);
+  color: var(--ice-dark);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.9), 0 2px 3px rgba(0,0,0,0.6), 0 0 12px rgba(79,168,216,0.5), 0 0 32px rgba(79,168,216,0.25);
+}
+
+@media (max-width: 560px) {
+  .skills-rock { min-height: 620px; }
+  .skill-word { letter-spacing: 0.03em; }
+  .skill-word--ml { left: 4%; }
+  .skill-word--entre { right: 5%; }
+  .skill-word--arch { left: 6%; }
+  .skill-word--fullstack { right: 3%; }
+  .skill-word--collab { left: 5%; }
+  .skill-word--data { right: 8%; }
+}
+
+/* ==========================================================================
+   SECTION 6 — Passions in the divot (recessed hollow in the rock face)
+   ========================================================================== */
+
+.passions-section {
+  position: relative;
+  background-image:
+    linear-gradient(to bottom, #0a0b12 0%, rgba(10, 11, 18, 0.84) 18%, rgba(6, 7, 10, 0.9) 55%, rgba(3, 3, 4, 0.95) 100%),
+    url(../assets/rock-texture.svg);
+  background-size: auto, 340px;
+  background-position: 0 0, center;
+  background-repeat: no-repeat, repeat;
+  background-color: #030304;
+  overflow: hidden;
+  padding-bottom: 5rem;
+}
+
+.passions-heading {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  color: #e8d9c4;
+  text-shadow: 0 2px 14px rgba(0,0,0,0.8);
+}
+
+.passions-subheading {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  margin-top: 0.5rem;
+  color: rgba(232, 217, 196, 0.5);
+  font-size: 0.85rem;
+}
+
+/* The hollow itself: irregular blob, darker recessed interior, inset
+   shadows on every edge, faint light catch on the lower outer lip. */
+.divot {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 1020px);
+  margin: clamp(2.5rem, 6vw, 4rem) auto 0;
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 4rem) clamp(3rem, 7vw, 5rem);
+  border-radius: 46% 54% 52% 48% / 38% 42% 58% 62%;
+  background:
+    radial-gradient(ellipse at 50% 35%, rgba(24, 18, 14, 0.55), rgba(5, 4, 4, 0.92) 75%),
+    url(../assets/rock-texture.svg);
+  background-size: auto, 260px;
+  box-shadow:
+    inset 0 26px 60px rgba(0, 0, 0, 0.85),
+    inset 0 -18px 44px rgba(0, 0, 0, 0.75),
+    inset 22px 0 50px rgba(0, 0, 0, 0.6),
+    inset -22px 0 50px rgba(0, 0, 0, 0.6),
+    0 4px 4px rgba(170, 160, 140, 0.1),
+    0 -3px 6px rgba(0, 0, 0, 0.7);
+}
+
+/* Faint warm light pooling in the hollow */
+.divot-glow {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 45%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 150, 70, 0.13), rgba(255, 100, 40, 0.05) 50%, transparent 75%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.passion-paintings {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(1.5rem, 4vw, 3rem) clamp(1.75rem, 5vw, 3.5rem);
+}
+
+.passion {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: clamp(150px, 26vw, 200px);
+  color: inherit;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+
+.passion:focus-visible {
+  outline: 2px solid rgba(216, 207, 192, 0.6);
+  outline-offset: 10px;
+  border-radius: 12px;
+}
+
+.passion-art {
+  width: 100%;
+  height: auto;
+  max-width: 170px;
+  margin: 0 auto;
+  opacity: 0.88;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.7));
+  transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s var(--ease-smooth);
+}
+
+/* Slight uneven placement so the marks follow the hollow, not a grid */
+.passion:nth-child(odd) .passion-art { transform: rotate(-2deg); }
+.passion:nth-child(even) .passion-art { transform: rotate(1.5deg) translateY(6px); }
+
+.passion:hover .passion-art,
+.passion:focus-visible .passion-art,
+.passion.is-open .passion-art {
+  opacity: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 12px rgba(255, 170, 90, 0.2));
+}
+
+.passion-name {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: #d9b48f;
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.9);
+}
+
+/* Carved inscription: revealed on hover (desktop), tap (mobile), or focus */
+.passion-note {
+  display: block;
+  max-width: 240px;
+  margin: 0 auto;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  overflow: hidden;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--pigment-white);
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.9);
+  transition: max-height 0.45s var(--ease-smooth), opacity 0.45s ease, transform 0.45s var(--ease-smooth);
+}
+
+.passion-note::before {
+  content: "";
+  display: block;
+  width: 38px;
+  height: 2px;
+  margin: 0.75rem auto 0.6rem;
+  background: linear-gradient(90deg, transparent, rgba(201, 111, 56, 0.7), transparent);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.8);
+}
+
+.passion.is-open .passion-note,
+.passion:focus-visible .passion-note {
+  max-height: 12rem;
+  opacity: 1;
+  transform: none;
+}
+
+@media (hover: hover) {
+  .passion:hover .passion-note {
+    max-height: 12rem;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   SECTION 7 — Base camp + footer
+   ========================================================================== */
+
+.basecamp-section {
+  position: relative;
+  background: linear-gradient(to bottom, #030304 0%, #14151a 16%, #1a1c22 32%, #2b2620 65%, #3a2e22 100%);
+  overflow: hidden;
+  padding-bottom: 2rem;
+}
+
+/* Drifts surface out of the dark above rather than cutting in at the seam */
+.snow-drifts {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  z-index: 1;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.45) 38%, #000 58%, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.45) 38%, #000 58%, #000 72%, transparent 100%);
+}
+
+.basecamp-heading {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  color: #fff;
+  margin-top: clamp(3.5rem, 14vw, 7rem);
+  margin-bottom: 2rem;
+  text-shadow: 0 2px 18px rgba(0,0,0,0.8), 0 0 4px rgba(0,0,0,0.6);
+}
+
+.camp-scene {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(1rem, 6vw, 4rem);
+  margin: 0 auto 3rem;
+  max-width: 600px;
+}
+
+.tent {
+  width: clamp(120px, 22vw, 220px);
+  height: auto;
+}
+
+.campfire {
+  width: clamp(90px, 16vw, 160px);
+  height: auto;
+  overflow: visible;
+}
+
+.flame {
+  transform-origin: 80px 125px;
+  animation: flicker 1.1s ease-in-out infinite alternate;
+}
+
+.flame--outer { animation-duration: 1.3s; }
+.flame--mid { animation-duration: 0.9s; }
+.flame--inner { animation-duration: 0.7s; }
+
+@keyframes flicker {
+  0%   { transform: scaleY(1) scaleX(1) translateY(0); }
+  50%  { transform: scaleY(1.08) scaleX(0.96) translateY(-2px); }
+  100% { transform: scaleY(0.95) scaleX(1.04) translateY(1px); }
+}
+
+.spark {
+  fill: #ffb347;
+}
+
+.signpost-wrap {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.signpost {
+  width: clamp(260px, 40vw, 340px);
+  height: auto;
+  overflow: visible;
+}
+
+.signplank {
+  stroke: #3a2818;
+  stroke-width: 2;
+  transition: filter 0.3s ease, transform 0.3s ease;
+  transform-origin: center;
+}
+
+.signplank-text {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  fill: #f3e6d3;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.signpost a:hover .signplank,
+.signpost a:focus-visible .signplank {
+  filter: brightness(1.3) drop-shadow(0 0 10px rgba(255, 215, 106, 0.6));
+}
+
+.signpost a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.site-footer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 1.5rem 1rem 2.5rem;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ==========================================================================
+   Reduced motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .summit-section { height: auto; }
+  .summit-pin { position: relative; height: 100vh; }
+  #scrubCanvas { display: none; }
+  .reduced-motion-hero { display: block; }
+  .scroll-hint { display: none; }
+  .summit-shade { opacity: 1; }
+  .summit-overlay { opacity: 1; position: relative; height: 100%; }
+
+  .trail-role { opacity: 1; transform: none; }
+  .trail-path { stroke-dashoffset: 0 !important; }
+  .cairn-stone, .cairn-card { opacity: 1 !important; transform: none !important; }
+
+  .flame, .scroll-hint, .diamond-heading-text {
+    animation: none !important;
+  }
+
+  .passion-art,
+  .passion-note {
+    transition: none !important;
+  }
+
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (min-width: 641px) and (prefers-reduced-motion: reduce) {
+  .elevation-hud { display: none; }
+}

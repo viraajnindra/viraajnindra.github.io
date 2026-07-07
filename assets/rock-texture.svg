@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <filter id="rock" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.011" numOctaves="7" seed="11" stitchTiles="stitch" result="noise"/>
+      <feDiffuseLighting in="noise" lighting-color="#b8c4d6" surfaceScale="9" diffuseConstant="1.1" result="relief">
+        <feDistantLight azimuth="235" elevation="30"/>
+      </feDiffuseLighting>
+      <feBlend in="relief" in2="SourceGraphic" mode="multiply" result="rockdark"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.004 0.028" numOctaves="5" seed="4" stitchTiles="stitch" result="snownoise"/>
+      <feColorMatrix in="snownoise" type="matrix"
+        values="0 0 0 0 0.88
+                0 0 0 0 0.92
+                0 0 0 0 0.97
+                0 0 0 14 -10.8" result="snow"/>
+      <feComposite in="snow" in2="rockdark" operator="over"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" fill="#232c3d" filter="url(#rock)"/>
+</svg>

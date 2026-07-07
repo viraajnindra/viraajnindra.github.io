@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viraaj Nindra — Descent</title>
+<meta name="description" content="Viraaj Nindra — Engineer, Builder, Climber of Interesting Problems. A scroll-driven descent from summit to base camp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Elevation meter (site-wide HUD) -->
+<aside class="elevation-hud" aria-hidden="true">
+  <div class="elevation-track">
+    <div class="elevation-marker" id="elevationMarker"></div>
+  </div>
+  <div class="elevation-readout" id="elevationReadout">8,848m</div>
+</aside>
+
+<main>
+
+  <!-- ===================== SECTION 1 — SUMMIT VIDEO SCRUB ===================== -->
+  <section id="summit" class="summit-section">
+    <div class="summit-pin">
+      <canvas id="scrubCanvas" aria-hidden="true"></canvas>
+
+      <img id="reducedMotionHero" src="assets/end-frame.webp" alt="" class="reduced-motion-hero" aria-hidden="true">
+
+      <div class="summit-shade" id="summitShade" aria-hidden="true"></div>
+
+      <div class="summit-overlay" id="summitOverlay">
+        <h1 class="summit-title">Viraaj Nindra</h1>
+        <p class="summit-subtitle">Engineer &middot; Builder &middot; Climber of Interesting Problems</p>
+        <p class="summit-cta">Now — climb down the mountain with me.</p>
+      </div>
+
+      <div class="scroll-hint" id="scrollHint" aria-hidden="true">
+        <span class="scroll-hint-text">scroll</span>
+        <span class="scroll-hint-line"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION 2 — BLEND ZONE ===================== -->
+  <section id="blend" class="blend-section" aria-hidden="true">
+    <svg class="rock-noise" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <filter id="noiseFilter">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="noise"/>
+          <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0"/>
+        </filter>
+      </defs>
+      <rect width="1200" height="400" filter="url(#noiseFilter)"/>
+    </svg>
+  </section>
+
+  <!-- One continuous rock face behind sections 3–5: a single texture +
+       gradient spans all three so no background restarts at section edges -->
+  <div class="mountain-face">
+
+  <!-- ===================== SECTION 3 — PASSION PROJECTS ===================== -->
+  <section id="projects" class="projects-section" aria-labelledby="projects-heading">
+    <svg class="rock-layer rock-layer--projects" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,80 L180,140 L360,60 L540,160 L720,70 L900,150 L1080,90 L1260,170 L1440,100 L1440,900 L0,900 Z" fill="#171a26"/>
+      <path d="M0,220 L220,180 L460,260 L700,190 L960,270 L1200,200 L1440,250 L1440,900 L0,900 Z" fill="#12141f"/>
+    </svg>
+
+    <div class="section-inner">
+      <h2 id="projects-heading" class="diamond-heading">
+        <span class="diamond-heading-text">Passion Projects</span>
+      </h2>
+
+      <div class="quartz-grid">
+
+        <a class="quartz-chunk" href="https://tiffanyw0ng.github.io/SyncEd/" target="_blank" rel="noopener noreferrer">
+          <svg class="quartz-shape" viewBox="0 0 240 220" aria-hidden="true">
+            <polygon points="30,10 150,4 230,60 220,150 160,215 60,200 10,140 4,60" class="quartz-facet quartz-facet--a"/>
+            <polygon points="30,10 150,4 100,110" class="quartz-facet quartz-facet--b"/>
+            <polygon points="230,60 220,150 100,110" class="quartz-facet quartz-facet--c"/>
+            <polygon points="160,215 60,200 100,110" class="quartz-facet quartz-facet--d"/>
+            <polygon points="10,140 4,60 100,110" class="quartz-facet quartz-facet--e"/>
+          </svg>
+          <div class="quartz-content">
+            <h3>SyncEd</h3>
+            <p>AI course-content sync platform (hackathon build: scraping &rarr; embeddings &rarr; similarity scoring &rarr; LLM insights)</p>
+          </div>
+        </a>
+
+        <a class="quartz-chunk" href="https://brainbytes-vvcm.onrender.com" target="_blank" rel="noopener noreferrer">
+          <svg class="quartz-shape" viewBox="0 0 240 220" aria-hidden="true">
+            <polygon points="40,6 160,14 226,70 214,160 150,212 50,206 8,150 12,66" class="quartz-facet quartz-facet--a"/>
+            <polygon points="40,6 160,14 110,100" class="quartz-facet quartz-facet--b"/>
+            <polygon points="226,70 214,160 110,100" class="quartz-facet quartz-facet--c"/>
+            <polygon points="150,212 50,206 110,100" class="quartz-facet quartz-facet--d"/>
+            <polygon points="8,150 12,66 110,100" class="quartz-facet quartz-facet--e"/>
+          </svg>
+          <div class="quartz-content">
+            <h3>BrainBytes</h3>
+            <p>Adaptive learning platform turning course material into short interactive "bytes" with embedded quizzes</p>
+          </div>
+        </a>
+
+        <a class="quartz-chunk" href="https://campus-geo-challenge.lovable.app" target="_blank" rel="noopener noreferrer">
+          <svg class="quartz-shape" viewBox="0 0 240 220" aria-hidden="true">
+            <polygon points="20,20 140,2 224,50 232,140 170,210 70,214 6,164 2,80" class="quartz-facet quartz-facet--a"/>
+            <polygon points="20,20 140,2 110,105" class="quartz-facet quartz-facet--b"/>
+            <polygon points="224,50 232,140 110,105" class="quartz-facet quartz-facet--c"/>
+            <polygon points="170,210 70,214 110,105" class="quartz-facet quartz-facet--d"/>
+            <polygon points="6,164 2,80 110,105" class="quartz-facet quartz-facet--e"/>
+          </svg>
+          <div class="quartz-content">
+            <h3>Campus Geo Challenge</h3>
+            <p>Campus geography guessing game</p>
+          </div>
+        </a>
+
+        <a class="quartz-chunk quartz-chunk--github" href="https://github.com/viraajnindra" target="_blank" rel="noopener noreferrer">
+          <svg class="quartz-shape" viewBox="0 0 240 220" aria-hidden="true">
+            <polygon points="50,4 170,10 220,80 200,170 130,216 40,200 6,130 14,54" class="quartz-facet quartz-facet--f"/>
+            <polygon points="50,4 170,10 115,105" class="quartz-facet quartz-facet--g"/>
+            <polygon points="220,80 200,170 115,105" class="quartz-facet quartz-facet--h"/>
+            <polygon points="130,216 40,200 115,105" class="quartz-facet quartz-facet--i"/>
+            <polygon points="6,130 14,54 115,105" class="quartz-facet quartz-facet--j"/>
+          </svg>
+          <div class="quartz-content">
+            <h3>GitHub</h3>
+            <p>More on GitHub</p>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION 4 — EXPERIENCE SWITCHBACK TRAIL ===================== -->
+  <section id="experience" class="trail-section" aria-labelledby="trail-heading">
+    <svg class="rock-layer rock-layer--trail" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,60 L240,110 L480,50 L720,120 L960,60 L1200,130 L1440,80 L1440,900 L0,900 Z" fill="#151822"/>
+    </svg>
+
+    <div class="section-inner">
+      <h2 id="trail-heading" class="diamond-heading">
+        <span class="diamond-heading-text">The Trail Down</span>
+      </h2>
+
+      <div class="trail-path-wrap" aria-hidden="true">
+        <svg class="trail-path-svg" viewBox="0 0 400 3400" preserveAspectRatio="xMidYMin meet">
+          <path id="trailPath" class="trail-path"
+            d="M200,0
+               C 60,150 60,300 200,420
+               C 340,540 340,650 200,780
+               C 60,900 60,1020 200,1140
+               C 340,1260 340,1380 200,1500
+               C 60,1620 60,1740 200,1860
+               C 340,1980 340,2100 200,2220
+               C 60,2340 60,2460 200,2580
+               C 320,2680 320,2780 240,2900
+               L 200,3400"/>
+        </svg>
+      </div>
+
+      <ol class="trail-roles">
+        <li class="trail-role trail-role--left">
+          <span class="trail-marker" aria-hidden="true"></span>
+          <div class="trail-card">
+            <h3>Process Intelligence &amp; AI Engineer Intern</h3>
+            <p class="trail-org">Robot.com &middot; May 2026&ndash;Present &middot; SF / Medell&iacute;n</p>
+            <p>Building AI-powered automation systems and backend infrastructure — LLM integrations, intelligent data pipelines, real-time sync.</p>
+          </div>
+        </li>
+
+        <li class="trail-role trail-role--right">
+          <span class="trail-marker" aria-hidden="true"></span>
+          <div class="trail-card">
+            <h3>ML / Software Engineer</h3>
+            <p class="trail-org">Graft Systems &middot; Jan 2026&ndash;Present &middot; Ann Arbor / SF</p>
+            <p>Random Forest model on RGB + depth imagery for grape cluster weight &rarr; vineyard yield forecasting. Built full-stack model inference and live visualization. Helped secure $25K non-dilutive funding (America250 pitch competition, Draper University incubator).</p>
+          </div>
+        </li>
+
+        <li class="trail-role trail-role--left">
+          <span class="trail-marker" aria-hidden="true"></span>
+          <div class="trail-card">
+            <h3>CEO Shadow</h3>
+            <p class="trail-org">Havenpark Communities &middot; Dec 2025 &middot; Salt Lake City</p>
+            <p>Acquisition analysis, market trends, and financial viability work with direct CEO-level strategy exposure.</p>
+          </div>
+        </li>
+
+        <li class="trail-role trail-role--right">
+          <span class="trail-marker" aria-hidden="true"></span>
+          <div class="trail-card">
+            <h3>Software Engineer &amp; Business Analyst</h3>
+            <p class="trail-org">AI Hackathons &middot; Ann Arbor</p>
+            <p>Architected full-stack AI apps (SyncEd, BrainBytes). Market analysis, go-to-market strategy, and pricing.</p>
+          </div>
+        </li>
+
+        <li class="trail-role trail-role--left trail-role--education">
+          <span class="trail-marker trail-marker--flag" aria-hidden="true"></span>
+          <div class="trail-card trail-card--education">
+            <h3>Education</h3>
+            <p class="trail-org">University of Michigan</p>
+            <p>BSE Computer Science, Business minor &middot; GPA 3.81 &middot; Dean&rsquo;s List</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION 4.5 — CAIRNS (volunteer & leadership) ===================== -->
+  <section id="cairns" class="cairns-section" aria-labelledby="cairns-heading">
+    <div class="section-inner">
+      <h2 id="cairns-heading" class="diamond-heading">
+        <span class="diamond-heading-text">Cairns</span>
+      </h2>
+      <p class="cairns-subheading">Stones stacked along the trail &mdash; marks left to guide the next climber.</p>
+
+      <div class="cairn-grid">
+
+        <div class="cairn">
+          <svg class="cairn-art" viewBox="0 0 200 230" aria-hidden="true">
+            <g filter="url(#roughPaint)">
+              <ellipse class="cairn-shadow" cx="100" cy="212" rx="70" ry="9"/>
+              <ellipse class="cairn-stone" cx="100" cy="192" rx="58" ry="20" fill="#232838"/>
+              <ellipse class="cairn-stone" cx="97" cy="159" rx="46" ry="17" fill="#1c2130" transform="rotate(-3 97 159)"/>
+              <ellipse class="cairn-stone" cx="103" cy="130" rx="37" ry="15" fill="#262c3d" transform="rotate(4 103 130)"/>
+              <ellipse class="cairn-stone" cx="98" cy="105" rx="27" ry="12" fill="#1f2433" transform="rotate(-5 98 105)"/>
+              <ellipse class="cairn-stone" cx="102" cy="84" rx="17" ry="9" fill="#2b3145" transform="rotate(6 102 84)"/>
+              <circle class="cairn-spark" cx="124" cy="68" r="2.5"/>
+              <circle class="cairn-spark" cx="80" cy="60" r="1.8"/>
+            </g>
+          </svg>
+          <div class="cairn-card">
+            <h3>Second Serve Club</h3>
+            <p class="cairn-org">President &middot; 2021&ndash;2025 &middot; Houston</p>
+            <p>Grew membership 30% and mobilized $5K+ in donated tennis equipment. Partnered with UH Adaptive Athletics to open the court to athletes with disabilities, and built a volunteer tracking system that kept it all running.</p>
+          </div>
+        </div>
+
+        <div class="cairn">
+          <svg class="cairn-art" viewBox="0 0 200 230" aria-hidden="true">
+            <g filter="url(#roughPaint)">
+              <ellipse class="cairn-shadow" cx="100" cy="212" rx="66" ry="9"/>
+              <ellipse class="cairn-stone" cx="100" cy="190" rx="54" ry="22" fill="#1f2433" transform="rotate(2 100 190)"/>
+              <ellipse class="cairn-stone" cx="104" cy="153" rx="44" ry="18" fill="#262c3d" transform="rotate(-4 104 153)"/>
+              <ellipse class="cairn-stone" cx="96" cy="120" rx="32" ry="15" fill="#1c2130" transform="rotate(3 96 120)"/>
+              <ellipse class="cairn-stone" cx="102" cy="93" rx="20" ry="11" fill="#2b3145" transform="rotate(-6 102 93)"/>
+              <circle class="cairn-spark" cx="120" cy="74" r="2.5"/>
+              <circle class="cairn-spark" cx="72" cy="88" r="1.8"/>
+            </g>
+          </svg>
+          <div class="cairn-card">
+            <h3>Coding Club</h3>
+            <p class="cairn-org">Founder &amp; Instructor &middot; 2023&ndash;2025</p>
+            <p>Founded a student-led club teaching Python, Java, and AI fundamentals to 40+ members. Designed 25+ coding challenges, mentored beginners in Git and debugging, and ran workshops that sent teams to regional STEM showcases.</p>
+          </div>
+        </div>
+
+        <div class="cairn">
+          <svg class="cairn-art" viewBox="0 0 200 230" aria-hidden="true">
+            <g filter="url(#roughPaint)">
+              <ellipse class="cairn-shadow" cx="100" cy="212" rx="62" ry="9"/>
+              <ellipse class="cairn-stone" cx="100" cy="196" rx="50" ry="18" fill="#262c3d"/>
+              <ellipse class="cairn-stone" cx="96" cy="166" rx="40" ry="15" fill="#1f2433" transform="rotate(-3 96 166)"/>
+              <ellipse class="cairn-stone" cx="104" cy="139" rx="33" ry="13" fill="#232838" transform="rotate(4 104 139)"/>
+              <ellipse class="cairn-stone" cx="98" cy="115" rx="26" ry="11" fill="#1c2130" transform="rotate(-4 98 115)"/>
+              <ellipse class="cairn-stone" cx="103" cy="94" rx="19" ry="9" fill="#2b3145" transform="rotate(5 103 94)"/>
+              <ellipse class="cairn-stone" cx="99" cy="77" rx="12" ry="7" fill="#262c3d" transform="rotate(-6 99 77)"/>
+              <circle class="cairn-spark" cx="118" cy="62" r="2.5"/>
+              <circle class="cairn-spark" cx="84" cy="56" r="1.8"/>
+            </g>
+          </svg>
+          <div class="cairn-card">
+            <h3>Small Support</h3>
+            <p class="cairn-org">President &amp; Co-Founder &middot; Nonprofit &middot; Mexico</p>
+            <p>Co-founded a nonprofit bringing mentorship and school supplies to underserved children in Mexico &mdash; recruiting and coordinating volunteers to distribute 1,000+ clothing and school items, with evaluation metrics to track the impact.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION 5 — SKILLS ===================== -->
+  <section id="skills" class="skills-section" aria-labelledby="skills-heading">
+    <div class="section-inner">
+      <h2 id="skills-heading" class="diamond-heading">
+        <span class="diamond-heading-text">Skills</span>
+      </h2>
+      <p class="skills-subheading">Etched into the rock face.</p>
+
+      <ul class="skills-rock" aria-label="Core skills">
+        <li class="skill-word skill-word--ml">Machine Learning</li>
+        <li class="skill-word skill-word--entre">Entrepreneurship</li>
+        <li class="skill-word skill-word--arch">System Architecture</li>
+        <li class="skill-word skill-word--py">Python</li>
+        <li class="skill-word skill-word--ai">AI / LLMs</li>
+        <li class="skill-word skill-word--fullstack">Full-Stack Development</li>
+        <li class="skill-word skill-word--collab">Collaborative Problem Solving</li>
+        <li class="skill-word skill-word--data">Data / Analytics</li>
+      </ul>
+    </div>
+  </section>
+
+  </div><!-- /.mountain-face -->
+
+  <!-- ===================== SECTION 6 — PASSIONS (recessed divot in the rock face) ===================== -->
+  <section id="cave" class="passions-section" aria-labelledby="passions-heading">
+
+    <!-- Shared hand-drawn wobble filter for the pigment paintings -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="roughPaint" x="-10%" y="-10%" width="120%" height="120%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" seed="7" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+        </filter>
+      </defs>
+    </svg>
+
+    <div class="section-inner">
+      <h2 id="passions-heading" class="passions-heading">Passions</h2>
+      <p class="passions-subheading">Painted into the hollow. Hover or tap a mark to read it.</p>
+
+      <div class="divot">
+        <div class="divot-glow" aria-hidden="true"></div>
+
+        <div class="passion-paintings">
+
+          <button class="passion" type="button" aria-expanded="false">
+            <svg class="passion-art" viewBox="0 0 200 200" aria-hidden="true">
+              <g filter="url(#roughPaint)" fill="none" stroke-linecap="round">
+                <ellipse cx="100" cy="150" rx="30" ry="12" stroke="#c96f38" stroke-width="4"/>
+                <path d="M70,150 L76,182 M130,150 L124,182" stroke="#c96f38" stroke-width="4"/>
+                <circle cx="100" cy="72" r="12" stroke="#c96f38" stroke-width="4"/>
+                <path d="M100,84 L100,122" stroke="#c96f38" stroke-width="4"/>
+                <path d="M100,96 L72,132 M100,96 L128,132" stroke="#c96f38" stroke-width="4"/>
+                <path d="M52,52 C 60,44 68,44 76,52" stroke="#d4a94c" stroke-width="3"/>
+                <path d="M124,46 C 132,38 140,38 148,46" stroke="#d4a94c" stroke-width="3"/>
+                <path d="M138,62 C 146,54 154,54 162,62" stroke="#d4a94c" stroke-width="3" opacity="0.8"/>
+                <circle cx="48" cy="66" r="2.5" fill="#d4a94c" stroke="none"/>
+                <circle cx="156" cy="34" r="2.5" fill="#d4a94c" stroke="none"/>
+              </g>
+            </svg>
+            <span class="passion-name">Music &amp; Creativity</span>
+            <span class="passion-note">Taught me how rhythm, emotion, and discipline can turn abstract ideas into something people feel.</span>
+          </button>
+
+          <button class="passion" type="button" aria-expanded="false">
+            <svg class="passion-art" viewBox="0 0 200 200" aria-hidden="true">
+              <g filter="url(#roughPaint)" fill="none" stroke-linecap="round">
+                <path d="M52,168 L148,168 M62,146 L138,146 M74,124 L126,124" stroke="#a8412e" stroke-width="5"/>
+                <path d="M58,168 L66,146 M142,168 L134,146 M70,146 L80,124 M130,146 L120,124" stroke="#a8412e" stroke-width="3"/>
+                <circle cx="100" cy="52" r="11" stroke="#d8cfc0" stroke-width="4"/>
+                <path d="M100,63 L100,100" stroke="#d8cfc0" stroke-width="4"/>
+                <path d="M100,74 L74,58 M100,74 L128,60" stroke="#d8cfc0" stroke-width="4"/>
+                <path d="M100,100 L84,124 M100,100 L116,124" stroke="#d8cfc0" stroke-width="4"/>
+                <path d="M128,60 L142,44" stroke="#d8cfc0" stroke-width="3"/>
+                <path d="M136,36 L150,50" stroke="#a8412e" stroke-width="6"/>
+                <path d="M156,28 L162,22 M160,38 L168,36 M148,20 L146,12" stroke="#d4a94c" stroke-width="3"/>
+              </g>
+            </svg>
+            <span class="passion-name">Technology &amp; Building</span>
+            <span class="passion-note">Taught me how to turn curiosity into useful tools and how small systems can become powerful experiences.</span>
+          </button>
+
+          <button class="passion" type="button" aria-expanded="false">
+            <svg class="passion-art" viewBox="0 0 200 200" aria-hidden="true">
+              <g filter="url(#roughPaint)" fill="none" stroke-linecap="round">
+                <path d="M28,172 L84,128 L112,140 L164,66" stroke="#d8cfc0" stroke-width="4"/>
+                <path d="M164,66 L164,34" stroke="#c96f38" stroke-width="3"/>
+                <path d="M164,36 L188,44 L164,52" stroke="#a8412e" stroke-width="3" fill="#a8412e"/>
+                <circle cx="88" cy="92" r="10" stroke="#c96f38" stroke-width="4"/>
+                <path d="M90,102 L96,126" stroke="#c96f38" stroke-width="4"/>
+                <path d="M92,110 L112,102 M92,110 L74,104" stroke="#c96f38" stroke-width="4"/>
+                <path d="M96,126 L86,144 M96,126 L112,138" stroke="#c96f38" stroke-width="4"/>
+                <path d="M36,150 L52,150 M34,158 L58,158" stroke="#d4a94c" stroke-width="2.5" opacity="0.7"/>
+              </g>
+            </svg>
+            <span class="passion-name">Entrepreneurship &amp; Projects</span>
+            <span class="passion-note">Taught me ownership, iteration, and how to bring an idea from rough sketch to real-world impact.</span>
+          </button>
+
+          <button class="passion" type="button" aria-expanded="false">
+            <svg class="passion-art" viewBox="0 0 200 200" aria-hidden="true">
+              <g filter="url(#roughPaint)" fill="none" stroke-linecap="round">
+                <path d="M118,74 C 118,58 138,58 138,74 C 138,94 106,94 106,70 C 106,42 150,42 150,74 C 150,110 94,110 94,66" stroke="#d4a94c" stroke-width="3.5"/>
+                <circle cx="66" cy="118" r="11" stroke="#d8cfc0" stroke-width="4"/>
+                <path d="M66,129 L66,162" stroke="#d8cfc0" stroke-width="4"/>
+                <path d="M66,138 L46,150 M66,136 L92,112" stroke="#d8cfc0" stroke-width="4"/>
+                <path d="M66,162 L52,186 M66,162 L80,186" stroke="#d8cfc0" stroke-width="4"/>
+                <circle cx="160" cy="34" r="2.5" fill="#d4a94c" stroke="none"/>
+                <circle cx="86" cy="40" r="2.5" fill="#d4a94c" stroke="none"/>
+                <path d="M40,60 L40,72 M34,66 L46,66" stroke="#c96f38" stroke-width="2.5"/>
+              </g>
+            </svg>
+            <span class="passion-name">Learning &amp; Curiosity</span>
+            <span class="passion-note">Taught me to keep asking better questions and to treat every new skill as another part of the mountain to understand.</span>
+          </button>
+
+          <button class="passion" type="button" aria-expanded="false">
+            <svg class="passion-art" viewBox="0 0 200 200" aria-hidden="true">
+              <g filter="url(#roughPaint)" fill="none" stroke-linecap="round">
+                <circle cx="52" cy="78" r="9" stroke="#c96f38" stroke-width="4"/>
+                <path d="M52,87 L52,112 M52,112 L42,130 M52,112 L62,130" stroke="#c96f38" stroke-width="4"/>
+                <circle cx="148" cy="78" r="9" stroke="#c96f38" stroke-width="4"/>
+                <path d="M148,87 L148,112 M148,112 L138,130 M148,112 L158,130" stroke="#c96f38" stroke-width="4"/>
+                <circle cx="100" cy="44" r="9" stroke="#a8412e" stroke-width="4"/>
+                <path d="M100,53 L100,78 M100,78 L90,96 M100,78 L110,96" stroke="#a8412e" stroke-width="4"/>
+                <path d="M58,96 C 72,74 88,68 94,62 M106,62 C 112,68 128,74 142,96" stroke="#d8cfc0" stroke-width="3"/>
+                <circle cx="100" cy="150" r="8" stroke="#d4a94c" stroke-width="3"/>
+                <path d="M100,142 C 96,134 104,130 100,122" stroke="#a8412e" stroke-width="3"/>
+              </g>
+            </svg>
+            <span class="passion-name">Community &amp; Collaboration</span>
+            <span class="passion-note">Taught me that the best work improves when it is shaped with other people, not just for them.</span>
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECTION 7 — BASE CAMP + FOOTER ===================== -->
+  <section id="basecamp" class="basecamp-section" aria-labelledby="basecamp-heading">
+    <svg class="snow-drifts" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,180 C 200,120 350,200 550,150 C 750,100 900,180 1100,140 C 1250,110 1350,150 1440,130 L1440,300 L0,300 Z" fill="#eef2f9"/>
+      <path d="M0,220 C 220,180 400,230 620,190 C 820,160 980,220 1180,180 C 1300,160 1380,190 1440,180 L1440,300 L0,300 Z" fill="#dfe6f1"/>
+    </svg>
+
+    <div class="section-inner">
+      <h2 id="basecamp-heading" class="basecamp-heading">Base Camp</h2>
+
+      <div class="camp-scene" aria-hidden="true">
+        <svg class="tent" viewBox="0 0 220 140">
+          <polygon points="20,140 110,30 200,140" fill="#3a4a63"/>
+          <polygon points="90,140 110,80 130,140" fill="#263144"/>
+          <line x1="110" y1="30" x2="110" y2="140" stroke="#1b2434" stroke-width="2"/>
+        </svg>
+
+        <svg class="campfire" viewBox="0 0 160 160" aria-label="Campfire">
+          <g class="campfire-logs">
+            <rect x="40" y="120" width="80" height="10" rx="4" fill="#4a3324" transform="rotate(-8 80 125)"/>
+            <rect x="40" y="120" width="80" height="10" rx="4" fill="#3a2818" transform="rotate(10 80 125)"/>
+          </g>
+          <g class="flame-group">
+            <path class="flame flame--outer" d="M80,50 C 60,80 55,105 80,125 C 105,105 100,80 80,50 Z" fill="#ff7a29"/>
+            <path class="flame flame--mid" d="M80,68 C 68,90 66,105 80,120 C 94,105 92,90 80,68 Z" fill="#ffb347"/>
+            <path class="flame flame--inner" d="M80,85 C 74,98 74,106 80,114 C 86,106 86,98 80,85 Z" fill="#fff1c2"/>
+          </g>
+          <g class="sparks" id="sparks"></g>
+        </svg>
+      </div>
+
+      <nav class="signpost-wrap" aria-label="Contact links">
+        <svg class="signpost" viewBox="0 0 320 320" role="img" aria-label="Wooden signpost with links to LinkedIn, GitHub, and Email">
+          <rect x="150" y="60" width="16" height="240" fill="#4a3324" aria-hidden="true"/>
+
+          <a href="https://www.linkedin.com/in/viraaj-nindra" target="_blank" rel="noopener noreferrer">
+            <polygon class="signplank" points="158,80 300,70 320,95 300,120 158,110" fill="#6b4a30"/>
+            <text x="215" y="100" class="signplank-text">LinkedIn</text>
+          </a>
+
+          <a href="https://github.com/viraajnindra" target="_blank" rel="noopener noreferrer">
+            <polygon class="signplank" points="150,140 8,130 -12,155 8,180 150,170" fill="#6b4a30"/>
+            <text x="80" y="160" class="signplank-text">GitHub</text>
+          </a>
+
+          <a href="mailto:viraajnindra@gmail.com">
+            <polygon class="signplank" points="158,200 280,192 298,217 280,242 158,230" fill="#6b4a30"/>
+            <text x="210" y="220" class="signplank-text">Email</text>
+          </a>
+        </svg>
+      </nav>
+    </div>
+
+    <footer class="site-footer">
+      <p>&copy; 2026 Viraaj Nindra — built at 8,848m</p>
+    </footer>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
