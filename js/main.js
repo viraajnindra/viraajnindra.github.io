@@ -7,12 +7,15 @@
   'use strict';
 
   var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var videoLoadingScrollLocked = false;
 
   document.addEventListener('DOMContentLoaded', function () {
+    lockVideoScroll();
     if (!prefersReducedMotion) {
       initFrameScrub();
     } else {
       // Static fallback already shown via CSS (.reduced-motion-hero)
+      releaseVideoLoading();
     }
 
     initScrollTriggers();
@@ -23,6 +26,58 @@
     initCampfireSparks();
     initElevationMeter();
   });
+
+  function updateVideoLoadingProgress(loaded, total) {
+    var progress = document.getElementById('videoLoaderProgress');
+    if (progress) progress.textContent = Math.round((loaded / total) * 100) + '%';
+  }
+
+  function keepVideoAtTop() {
+    if (videoLoadingScrollLocked && window.scrollY !== 0) window.scrollTo(0, 0);
+  }
+
+  function blockVideoScroll(event) {
+    event.preventDefault();
+  }
+
+  function blockVideoScrollKeys(event) {
+    var blockedKeys = [' ', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'];
+    if (blockedKeys.indexOf(event.key) !== -1) event.preventDefault();
+  }
+
+  function lockVideoScroll() {
+    if (videoLoadingScrollLocked) return;
+    videoLoadingScrollLocked = true;
+    window.addEventListener('scroll', keepVideoAtTop);
+    document.addEventListener('wheel', blockVideoScroll, { passive: false });
+    document.addEventListener('touchmove', blockVideoScroll, { passive: false });
+    document.addEventListener('keydown', blockVideoScrollKeys);
+    keepVideoAtTop();
+  }
+
+  function unlockVideoScroll() {
+    if (!videoLoadingScrollLocked) return;
+    videoLoadingScrollLocked = false;
+    window.removeEventListener('scroll', keepVideoAtTop);
+    document.removeEventListener('wheel', blockVideoScroll);
+    document.removeEventListener('touchmove', blockVideoScroll);
+    document.removeEventListener('keydown', blockVideoScrollKeys);
+  }
+
+  function releaseVideoLoading() {
+    window.scrollTo(0, 0);
+    unlockVideoScroll();
+    document.documentElement.classList.remove('video-loading');
+    document.body.classList.remove('video-loading');
+    var loader = document.getElementById('videoLoader');
+    if (loader) loader.setAttribute('aria-hidden', 'true');
+    if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+  }
+
+  function showVideoLoadingError() {
+    var progress = document.getElementById('videoLoaderProgress');
+    if (progress) progress.textContent = 'Unable to load the video. Please refresh.';
+  }
 
   /* ------------------------------------------------------------------------
      Section 1: Frame-sequence video scrub on canvas
@@ -35,12 +90,16 @@
 
   function initFrameScrub() {
     var canvas = document.getElementById('scrubCanvas');
-    if (!canvas) return;
+    if (!canvas) {
+      releaseVideoLoading();
+      return;
+    }
     var ctx = canvas.getContext('2d');
 
     var frames = new Array(FRAME_COUNT + 1); // 1-indexed
     var loadedFlags = new Array(FRAME_COUNT + 1).fill(false);
     var currentFrameIndex = 1;
+    var posterFrame = null;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -73,31 +132,30 @@
     function drawFrame(index) {
       currentFrameIndex = index;
       var useIndex = loadedFlags[index] ? index : nearestLoadedIndex(index);
-      if (useIndex === null) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawCover(frames[useIndex]);
+      if (useIndex !== null) {
+        drawCover(frames[useIndex]);
+      } else if (posterFrame) {
+        drawCover(posterFrame);
+      }
     }
 
-    // Immediate first paint: poster or frame-001
+    // Show the poster while every individual scrub frame is decoded.
     var firstImg = new Image();
     firstImg.src = 'assets/poster.webp';
     firstImg.onload = function () {
-      frames[1] = firstImg;
-      loadedFlags[1] = true;
+      posterFrame = firstImg;
       resizeCanvas();
-    };
-    firstImg.onerror = function () {
-      loadFrame(1, function () { resizeCanvas(); });
     };
 
     function loadFrame(i, cb) {
-      if (loadedFlags[i]) { if (cb) cb(); return; }
+      if (loadedFlags[i]) { if (cb) cb(true); return; }
       var img = new Image();
       img.onload = function () {
         var done = function () {
           frames[i] = img;
           loadedFlags[i] = true;
-          if (cb) cb();
+          if (cb) cb(true);
         };
         if (img.decode) {
           img.decode().then(done).catch(done);
@@ -105,42 +163,47 @@
           done();
         }
       };
-      img.onerror = function () { if (cb) cb(); };
+      img.onerror = function () { if (cb) cb(false); };
       img.src = FRAME_PATH(i);
     }
 
-    // Progressive async preload of remaining frames after first paint
-    function preloadRemaining() {
-      var i = 2;
-      function next() {
-        if (i > FRAME_COUNT) return;
-        var batchEnd = Math.min(i + 3, FRAME_COUNT + 1);
-        var pending = batchEnd - i;
-        for (var j = i; j < batchEnd; j++) {
-          (function (idx) {
-            loadFrame(idx, function () {
-              pending--;
-              if (pending === 0) {
-                i = batchEnd;
-                if ('requestIdleCallback' in window) {
-                  requestIdleCallback(next, { timeout: 200 });
-                } else {
-                  setTimeout(next, 16);
-                }
-              }
-            });
-          })(j);
-        }
-      }
-      next();
-    }
+    // Keep the page locked until all 254 frames are available. Loading a small
+    // group at a time avoids overwhelming the browser while guaranteeing that
+    // scroll scrubbing never reaches a missing frame.
+    function preloadAllFrames() {
+      var nextIndex = 1;
+      var completeCount = 0;
+      var hasFailures = false;
+      var concurrency = 6;
 
-    window.addEventListener('load', function () {
-      setTimeout(preloadRemaining, 50);
-    });
+      function loadNext() {
+        if (nextIndex > FRAME_COUNT) return;
+        var index = nextIndex++;
+        loadFrame(index, function (success) {
+          completeCount++;
+          hasFailures = hasFailures || !success;
+          updateVideoLoadingProgress(completeCount, FRAME_COUNT);
+
+          if (completeCount === FRAME_COUNT) {
+            if (hasFailures) {
+              showVideoLoadingError();
+            } else {
+              drawFrame(currentFrameIndex);
+              releaseVideoLoading();
+            }
+            return;
+          }
+          loadNext();
+        });
+      }
+
+      updateVideoLoadingProgress(0, FRAME_COUNT);
+      for (var i = 0; i < concurrency; i++) loadNext();
+    }
 
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
+    preloadAllFrames();
 
     // ScrollTrigger: pin canvas for 400vh, scrub frame index across progress
     if (window.gsap && window.ScrollTrigger) {

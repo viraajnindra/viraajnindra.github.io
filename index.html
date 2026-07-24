@@ -1,16 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="video-loading">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Viraaj Nindra — Descent</title>
 <meta name="description" content="Viraaj Nindra — Engineer, Builder, Climber of Interesting Problems. A scroll-driven descent from summit to base camp.">
+<link rel="icon" type="image/jpeg" href="assets/favicon.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="video-loading">
+
+<div class="video-loader" id="videoLoader" role="status" aria-live="polite">
+  <div class="video-loader__content">
+    <p class="video-loader__label">Loading the descent</p>
+    <p class="video-loader__progress" id="videoLoaderProgress">0%</p>
+  </div>
+</div>
 
 <!-- Elevation meter (site-wide HUD) -->
 <aside class="elevation-hud" aria-hidden="true">
@@ -469,7 +477,7 @@
             <text x="80" y="160" class="signplank-text">GitHub</text>
           </a>
 
-          <a href="mailto:viraajnindra@gmail.com">
+          <a href="mailto:vnindra@umich.edu">
             <polygon class="signplank" points="158,200 280,192 298,217 280,242 158,230" fill="#6b4a30"/>
             <text x="210" y="220" class="signplank-text">Email</text>
           </a>
