@@ -628,6 +628,17 @@ img, svg { display: block; max-width: 100%; }
   color: rgba(255,255,255,0.7);
 }
 
+.trail-details {
+  margin: 0.75rem 0 0;
+  padding-left: 1.15rem;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.trail-details li + li {
+  margin-top: 0.45rem;
+}
+
 .trail-card--education {
   border-color: rgba(255, 215, 106, 0.3);
 }
@@ -1113,10 +1124,31 @@ img, svg { display: block; max-width: 100%; }
   margin-bottom: 1rem;
 }
 
-.signpost {
+.signpost-click-area {
+  position: relative;
   width: clamp(260px, 40vw, 340px);
+}
+
+.signpost {
+  width: 100%;
   height: auto;
   overflow: visible;
+}
+
+.signpost-email-link {
+  position: absolute;
+  z-index: 1;
+  left: 49.375%;
+  top: 60%;
+  width: 43.75%;
+  height: 15.625%;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.signpost-email-link:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
 }
 
 .signplank {
