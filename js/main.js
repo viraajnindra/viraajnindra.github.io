@@ -217,7 +217,8 @@
         trigger: '.summit-section',
         start: 'top top',
         end: 'bottom bottom',
-        scrub: true,
+        // Brief catch-up creates a natural sense of momentum after scrolling.
+        scrub: 0.4,
         onUpdate: function (self) {
           var progress = self.progress;
           var frameIndex = Math.max(1, Math.min(FRAME_COUNT, Math.round(progress * (FRAME_COUNT - 1)) + 1));
