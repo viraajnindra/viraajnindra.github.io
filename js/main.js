@@ -222,7 +222,7 @@
           trigger: '.summit-section',
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 0.4
+          scrub: 0.9
         },
         onUpdate: function () {
           var progress = scrubState.progress;
