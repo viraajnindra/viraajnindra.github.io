@@ -213,14 +213,19 @@
       var scrollHint = document.getElementById('scrollHint');
       var shade = document.getElementById('summitShade');
 
-      ScrollTrigger.create({
-        trigger: '.summit-section',
-        start: 'top top',
-        end: 'bottom bottom',
+      var scrubState = { progress: 0 };
+      gsap.to(scrubState, {
+        progress: 1,
+        ease: 'none',
         // Brief catch-up creates a natural sense of momentum after scrolling.
-        scrub: 0.4,
-        onUpdate: function (self) {
-          var progress = self.progress;
+        scrollTrigger: {
+          trigger: '.summit-section',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.4
+        },
+        onUpdate: function () {
+          var progress = scrubState.progress;
           var frameIndex = Math.max(1, Math.min(FRAME_COUNT, Math.round(progress * (FRAME_COUNT - 1)) + 1));
           drawFrame(frameIndex);
 
